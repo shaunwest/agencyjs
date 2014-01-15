@@ -8,14 +8,14 @@ agency.start = function() {
     var STYLES = '<style type="text/css">' +
         '.aj-base { font-family: sans-serif }' +
         '.aj-debug { position: absolute; color: white; background-color: black; width: 32px; height: 25px; }' +
-        '.aj-viewport { width: 500px; height: 500px; background-color: #0d3349; }' +
+        '.aj-viewport { position: relative; width: 500px; height: 500px; background-color: #0d3349; overflow: hidden;}' +
         '.aj-node { position: absolute; color: white; width: 100px; height: 100px; ' +
             'transform:translate3d(0,0,0);' +
             '-ms-transform:translate3d(0,0,0);' +
             '-webkit-transform:translate3d(0,0,0); }' +
         ' </style>';
 
-    var nodeSpeed = 5;
+    var nodeSpeed = 10;
 
     init();
 
@@ -34,7 +34,7 @@ agency.start = function() {
         agency.chrono.init(60, update, draw);
 
         // delay startup
-        setTimeout($.proxy(agency.chrono.start, agency.chrono), 200);
+        setTimeout($.proxy(agency.chrono.start, agency.chrono), 500);
     }
 
     function createStyles() {
@@ -64,15 +64,13 @@ agency.start = function() {
         var $node = action.$node,
             nodeX = $node.offset().left,
             nodeY = $node.offset().top,
-            diffX = 0,
-            diffY = 0,
             speedX = nodeSpeed,
             speedY = nodeSpeed,
             offsetX = nodeX,
-            offsetY = nodeY;
+            offsetY = nodeY,
+            diffX = action.deltaX - action.distanceX,
+            diffY = action.deltaY - action.distanceY;
 
-
-        diffX = action.deltaX - action.distanceX;
         if(diffX != 0) {
             speedX = Math.min(speedX, Math.abs(diffX));
             if(action.deltaX > 0) {
@@ -84,7 +82,6 @@ agency.start = function() {
             }
         }
 
-        diffY = action.deltaY - action.distanceY;
         if(diffY != 0) {
             speedY = Math.min(speedY, Math.abs(diffY));
             if(action.deltaY > 0) {
@@ -95,16 +92,6 @@ agency.start = function() {
                 action.distanceY -= speedY;
             }
         }
-
-
-        /*if(action.deltaY) {
-            diffY = action.deltaY - action.distanceY;
-            if(action.distanceY < diffY) {
-                diffY = Math.min(diffY, nodeSpeed);
-                offsetY = (action.deltaY > 0) ? nodeY - diffY : nodeY + diffY;
-                action.distanceY += diffY;
-            }
-        }*/
 
         $node.offset({left: offsetX, top: offsetY});
 
@@ -153,12 +140,21 @@ agency.start = function() {
         var nodes = [];
 
         $parent.children("div[data-ajnode='']").each(function() {
-            var $node = $(this);
+            var $node = $(this),
+                maximize = ($node.attr("data-maximize")) ? true : false;
+
             $node.addClass("aj-node");
+            if(maximize) {
+                $node.width($parent.width());
+                $node.height($parent.height());
+            }
 
             nodes.push({
                 $node: $node,
-                childNodes: getNodes($node)
+                childNodes: getNodes($node),
+                props: {
+                    maximize: maximize
+                }
             });
         });
 
