@@ -4,20 +4,24 @@
 
 var agency = agency || {};
 
-agency.move = function(nodeId, targetX, targetY) {
+agency.newPath = function(nodeId, targetX, targetY) {
     var $node   = $(nodeId),
         nodeX   = $node.offset().left,
         nodeY   = $node.offset().top,
-        action  = agency.actionFactory.getObject();
+        path  = agency.actionFactory.getObject(),
+        timeSteps = 100;
 
     targetX = agency.def(targetX, nodeX);
     targetY = agency.def(targetX, nodeY);
 
-    action['$node']     = $node;
-    action['targetX']   = targetX;
-    action['targetY']   = targetY;
-    action['deltaX']    = nodeX - targetX;
-    action['deltaY']    = nodeY - targetY;
+    path['$node']     = $node;
+    path['startX']    = nodeX;
+    path['startY']    = nodeY;
+    path['timeSteps'] = timeSteps;
+    path['timeStep']  = 0;
+    path['velocityX'] = agency.getVelocity(targetX - nodeX, timeSteps);
+    path['velocityY'] = agency.getVelocity(targetY - nodeY, timeSteps);
 
-    agency.actions.push(action);
+    return path;
 };
+

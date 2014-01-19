@@ -53,14 +53,44 @@ agency.start = function() {
 
     function handleActions() {
         var actions = agency.actions,
-            count = actions.length;
+            count = actions.length,
+            action;
 
         for(var i = 0; i < count; i++) {
-            handleAction(actions.shift());
+            action = actions.shift();
+            agency.path.target(action);
+            if(agency.path.travel()) {
+                actions.push(action);
+            } else {
+                // free resource?
+            }
         }
     }
 
-    function handleAction(action) {
+    /*function handleAction(action) {
+        var positionX = agency.getDelta(action.velocityX, action.timeStepX),
+            positionY = agency.getDelta(action.velocityY, action.timeStepY);
+
+        if(action.timeStepX < action.totalTime) {
+            action.timeStepX += action.timeStepLengthX;
+        }
+
+        if(action.timeStepY < action.totalTime) {
+            action.timeStepY += action.timeStepLengthY;
+        }
+
+        action.$node.offset({left: action.startX + positionX, top: action.startY + positionY});
+
+        if(action.timeStepX === action.totalTime && action.timeStepY === action.totalTime) {
+            agency.actionFactory.freeObject(action);
+        } else {
+            agency.actions.push(action);
+        }
+    }*/
+
+
+
+    /*function handleAction(action) {
         var $node = action.$node,
             nodeX = $node.offset().left,
             nodeY = $node.offset().top,
@@ -68,28 +98,28 @@ agency.start = function() {
             speedY = nodeSpeed,
             offsetX = nodeX,
             offsetY = nodeY,
-            diffX = action.deltaX - action.distanceX,
-            diffY = action.deltaY - action.distanceY;
+            diffX = Math.abs(action.deltaX) - action.distanceX,
+            diffY = Math.abs(action.deltaY) - action.distanceY;
 
         if(diffX != 0) {
-            speedX = Math.min(speedX, Math.abs(diffX));
+            speedX = Math.min(speedX, diffX);
             if(action.deltaX > 0) {
                 offsetX = nodeX - speedX;
                 action.distanceX += speedX;
             } else {
                 offsetX = nodeX + speedX;
-                action.distanceX -= speedX;
+                action.distanceX += speedX;
             }
         }
 
         if(diffY != 0) {
-            speedY = Math.min(speedY, Math.abs(diffY));
+            speedY = Math.min(speedY, diffY);
             if(action.deltaY > 0) {
                 offsetY = nodeY - speedY;
                 action.distanceY += speedY;
             } else {
                 offsetY = nodeY + speedY;
-                action.distanceY -= speedY;
+                action.distanceY += speedY;
             }
         }
 
@@ -100,7 +130,7 @@ agency.start = function() {
         } else {
             agency.actions.push(action);
         }
-    }
+    }*/
 
     function draw() {
     }

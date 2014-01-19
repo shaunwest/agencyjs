@@ -7,12 +7,12 @@ agency.actionFactory = (function() {
     var objects = [],
         template =  {
             $node       : null,
-            targetX     : 0,
-            targetY     : 0,
-            deltaX      : 0,
-            deltaY      : 0,
-            distanceX   : 0,
-            distanceY   : 0
+            startX      : 0,
+            startY      : 0,
+            timeSteps   : 0,
+            timeStep    : 0,
+            velocityX   : 0,
+            velocityY   : 0
         };
 
     function resetObject(object) {
